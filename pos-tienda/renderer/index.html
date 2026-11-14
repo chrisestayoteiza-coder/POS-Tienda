@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Punto de venta</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="login"><form id="lForm"><div class="logo" style="background:var(--brand);color:var(--brand-ink)">PV</div><h2>Iniciar sesión</h2>
+<div class="f"><label for="lUser">Usuario</label><select id="lUser" class="btn"></select></div>
+<div class="f"><label for="lPin">PIN</label><input id="lPin" type="password" inputmode="numeric" autocomplete="off"></div>
+<div id="lErr" class="low"></div><div id="lHint" class="muted"></div><button class="btn pri">Entrar</button></form></div>
+<div class="app">
+<aside class="side">
+  <div class="brand"><span class="logo">PV</span><span>Punto<br>de venta</span></div>
+  <nav role="tablist" aria-label="Secciones">
+    <button role="tab" data-tab="inicio" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Inicio</button>
+    <div class="grp">VENTAS</div>
+    <button role="tab" data-tab="venta" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>Punto de venta</button>
+    <button role="tab" data-tab="clientes" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6M16 5.5a3 3 0 010 6M18 14c2 .6 3.3 2.5 3.5 6"/></svg>Clientes</button>
+    <button role="tab" data-tab="caja" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg>Caja</button>
+    <button role="tab" data-tab="historial" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Ventas</button>
+    <div class="grp">INVENTARIO</div>
+    <button role="tab" data-tab="productos" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>Productos</button>
+    <button role="tab" data-tab="compras" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/></svg>Compras</button>
+    <button role="tab" data-tab="inventario" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6M9 13l2 2 4-4"/></svg>Inventario</button>
+    <div class="grp">FINANZAS</div>
+    <button role="tab" data-tab="reportes" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Reportes</button>
+    <div class="grp">SISTEMA</div>
+    <button role="tab" data-tab="config" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>Tienda</button>
+  </nav>
+  <div class="clock" id="clock"></div><div class="who"><span id="whoami"></span><button class="btn" id="logout">Cambiar usuario</button></div>
+</aside>
+<main>
+  <section id="inicio" class="view">
+    <div class="toolbar"><div><h2 style="font-size:24px">Panel</h2><span class="muted" id="dSub"></span></div><div class="pills sp" id="dPills"><button data-p="0">Hoy</button><button data-p="1">Ayer</button><button data-p="2">7 días</button><button data-p="3">30 días</button></div></div>
+    <div class="g3">
+      <div class="card"><h3>Actividad de ventas</h3>
+        <div class="two"><div><div class="big" id="dTot"></div><small>Total vendido</small><div id="dTotC"></div></div><div><div class="big" id="dOrd"></div><small>Ventas</small><div id="dOrdC"></div></div></div>
+        <div class="three"><div><b id="dProds"></b><small>Productos</small></div><div><b id="dLow"></b><small>Stock bajo</small></div><div><b id="dDesc"></b><small>Con descuento</small></div></div></div>
+      <div class="card"><h3>Actividad de productos</h3>
+        <div class="two"><div><div class="big" id="dArt"></div><small>Artículos vendidos</small></div><div><div class="big" id="dDist"></div><small>Productos distintos</small></div></div>
+        <div id="dTop"></div></div>
+      <div class="card"><h3>Ventas del periodo</h3><div id="dLine"></div><div id="dLineNote" class="muted" style="margin-top:6px"></div></div>
+    </div>
+    <h3 class="sec">Accesos rápidos</h3>
+    <div class="qa" id="dQa"><button data-go="venta" style="background:#168a46">Abrir punto de venta</button><button data-go="historial" style="background:#2563eb">Ventas</button><button data-go="productos" style="background:#7c3aed">Productos</button><button data-go="inventario" style="background:#c2410c">Inventario</button><button data-go="caja" style="background:#0e7c86">Caja</button><button data-go="reportes" style="background:#475569">Reportes</button></div>
+    <div class="g3" style="margin-top:16px">
+      <div class="card"><h3>Resumen de ventas (7 días)</h3><div id="dDays"></div></div>
+      <div class="card"><h3>Alerta de stock bajo</h3><div id="dLowList"></div></div>
+      <div class="card"><h3>Últimas transacciones</h3><div id="dRecent"></div></div>
+    </div>
+  </section>
+
+  <section id="venta" class="view on">
+    <div class="sell">
+      <div>
+        <button class="alertbar" id="alerts" hidden></button>
+        <form id="scanForm" class="scan" autocomplete="off">
+          <svg viewBox="0 0 24 24"><path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14" stroke-linecap="round"/></svg>
+          <input id="scan" type="text" placeholder="Escanea o escribe el código y presiona Enter" aria-label="Código de barras" autofocus>
+          <button class="btn pri" type="submit">Agregar</button>
+        </form>
+        <div id="msg" class="msg" aria-live="polite"></div>
+        <div class="ticket">
+          <div class="tk-head"><div><b>Venta en curso</b><span id="tkNum"></span></div><span id="tkDate"></span></div>
+          <div id="cart" class="lines"></div>
+          <div id="cartEmpty" class="empty">Aún no hay productos.<br>Escanea un código para empezar.</div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="paybox">
+          <div class="lbl"><span id="cajaTag" class="tag">Caja cerrada</span><span><span id="count">0</span> artículos</span></div>
+          <div class="total" id="total">$0</div>
+          <button class="btn" id="cliBtn" style="width:100%;margin-bottom:10px">Cliente: ninguno</button><button class="cobrar" id="cobrar" disabled>Cobrar (F2)</button>
+          <div class="btns"><button class="btn" id="dejar" disabled>Dejar en espera</button><button class="btn" id="espera">En espera (0)</button></div>
+          <button class="vaciar" id="vaciar" disabled>Vaciar carrito</button>
+        </div>
+        <div><h3>Acceso rápido</h3><div id="quick" class="tiles"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="productos" class="view">
+    <div class="panel">
+      <div class="toolbar"><h2>Catálogo</h2><span id="impMsg" class="sp"></span><select id="fCat" class="btn"></select><button class="btn" id="masivo">Cambiar precios</button><button class="btn" id="exportP">Exportar CSV</button><button class="btn" id="importP">Importar CSV</button><button class="btn pri" id="nuevo">Agregar producto</button><input type="file" id="file" accept=".csv,text/csv" hidden></div>
+      <div class="scroll"><table>
+        <thead><tr><th>Código</th><th>Nombre</th><th class="n">Precio</th><th class="n">Costo</th><th class="n">Stock</th><th>Vence</th><th></th></tr></thead>
+        <tbody id="prodBody"></tbody>
+      </table></div>
+      <div id="prodEmpty" class="empty" hidden>No hay productos. Agrega el primero.</div>
+    </div>
+  </section>
+
+  <section id="clientes" class="view">
+    <div class="panel">
+      <div class="toolbar"><h2>Clientes</h2><button class="btn pri sp" id="cliNew">Nuevo cliente</button></div>
+      <div class="scroll"><table><thead><tr><th>RUT</th><th>Nombre</th><th>Celular</th><th class="n">Puntos</th><th class="n">Debe</th><th></th></tr></thead><tbody id="cliBody"></tbody></table></div>
+      <div id="cliEmpty" class="empty" hidden>Aún no hay clientes.</div>
+    </div>
+  </section>
+
+  <section id="caja" class="view"><div class="panel" id="cajaBody"></div></section>
+
+  <section id="historial" class="view">
+    <div class="panel">
+      <div class="toolbar"><h2>Resumen de hoy</h2></div>
+      <div id="rep"></div>
+      <div class="toolbar"><h2>Ventas realizadas</h2><button class="btn sp" id="exportV">Exportar CSV</button></div>
+      <div class="scroll"><table>
+        <thead><tr><th>Fecha</th><th>Detalle</th><th>Pago</th><th class="n">Total</th><th></th></tr></thead>
+        <tbody id="histBody"></tbody>
+      </table></div>
+      <div id="histEmpty" class="empty" hidden>Todavía no hay ventas.</div>
+    </div>
+  </section>
+
+  <section id="compras" class="view"><div class="panel">
+    <div class="toolbar"><h2>Reposición sugerida</h2><button class="btn sp" id="repCsv">Exportar CSV</button><button class="btn pri" id="repCompra">Armar compra con esta lista</button></div>
+    <div class="scroll"><table><thead><tr><th>Producto</th><th class="n">Stock</th><th class="n">Vende por día</th><th class="n">Comprar</th></tr></thead><tbody id="repBody"></tbody></table></div>
+    <div id="repEmpty" class="empty" hidden>Nada que reponer por ahora.</div>
+    <div class="toolbar" style="margin-top:22px"><h2>Compras</h2><button class="btn pri sp" id="cpNew">Nueva compra</button></div>
+    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Documento</th><th class="n">Total</th><th class="n">Por pagar</th><th></th></tr></thead><tbody id="comBody"></tbody></table></div>
+    <div id="comEmpty" class="empty" hidden>Aún no hay compras registradas.</div>
+    <div class="toolbar" style="margin-top:22px"><h2>Proveedores</h2><button class="btn pri sp" id="pvNew">Nuevo proveedor</button></div>
+    <div class="scroll"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Teléfono</th><th class="n">Les debemos</th><th></th></tr></thead><tbody id="pvBody"></tbody></table></div>
+  </div></section>
+
+  <section id="inventario" class="view"><div class="panel">
+    <div class="toolbar"><h2>Conteo físico</h2><button class="btn pri sp" id="cvStart">Iniciar conteo</button></div>
+    <div id="cvBox"></div>
+    <div class="toolbar" style="margin-top:22px"><h2>Mermas y ajustes</h2><button class="btn pri sp" id="mmNew">Registrar merma o ajuste</button></div>
+    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Producto</th><th class="n">Antes</th><th class="n">Después</th><th>Motivo</th><th>Usuario</th></tr></thead><tbody id="ajBody"></tbody></table></div>
+  </div></section>
+
+  <section id="reportes" class="view"><div class="panel">
+    <div class="toolbar"><h2>Reportes</h2><select id="rPer" class="btn sp"><option value="7">Últimos 7 días</option><option value="30" selected>Últimos 30 días</option><option value="90">Últimos 90 días</option></select><button class="btn" id="rXls">Exportar Excel</button><button class="btn" id="rPrint">Imprimir o guardar PDF</button></div>
+    <div id="rMsg" class="muted"></div>
+    <div id="rStats"></div>
+    <div class="cols"><div><h3>Ventas por día</h3><div id="chDia"></div></div><div><h3>Ventas por hora</h3><div id="chHora"></div></div></div>
+    <div class="cols"><div><h3>Más vendidos</h3><div id="rTop"></div></div><div><h3>Sin ventas en el periodo</h3><div id="rNo"></div></div><div><h3>Control de caja por cajero</h3><div id="rCaja"></div></div></div>
+    <div class="toolbar"><h2>Gastos del negocio</h2><button class="btn pri sp" id="gNew">Registrar gasto</button></div>
+    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Categoría</th><th>Detalle</th><th class="n">Monto</th><th></th></tr></thead><tbody id="gBody"></tbody></table></div>
+    <div class="toolbar" style="margin-top:22px"><h2>Registro de auditoría</h2><button class="btn sp" id="aExp">Exportar CSV</button></div>
+    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody id="auBody"></tbody></table></div>
+  </div></section>
+
+  <section id="config" class="view">
+    <div class="panel">
+      <div class="toolbar"><h2>Datos de la tienda (aparecen en el ticket)</h2></div>
+      <div class="f w"><label for="cfNombre">Nombre</label><input id="cfNombre"></div>
+      <div class="f w"><label for="cfRut">RUT</label><input id="cfRut"></div>
+      <div class="f w"><label for="cfDir">Dirección</label><input id="cfDir"></div>
+      <div class="f w"><label for="cfPie">Mensaje al final del ticket</label><input id="cfPie"></div>
+      <div class="f w"><label for="cfIva">IVA (%)</label><input id="cfIva" type="number" min="0" max="100"></div>
+      <div class="f w"><label for="cfPtsPor">Puntos: 1 punto cada (CLP)</label><input id="cfPtsPor" type="number" min="0"></div>
+      <div class="f w"><label for="cfValPto">Cada punto equivale a (CLP de descuento)</label><input id="cfValPto" type="number" min="0"></div>
+      <div class="f w"><label for="cfPrinter">Impresora térmica: nombre compartido en Windows (sin espacios)</label><input id="cfPrinter" placeholder="ej. TICKET"></div>
+      <label class="chk"><input type="checkbox" id="cfAuto"> Imprimir ticket al cobrar</label>
+      <label class="chk"><input type="checkbox" id="cfDrawer"> Abrir cajón de dinero al cobrar en efectivo</label>
+      <div class="btns" style="max-width:420px"><button class="btn pri" id="cfSave">Guardar</button><button class="btn" id="cfTest">Probar impresora</button><button class="btn" id="cfOpen">Abrir cajón</button></div>
+      <div id="cfMsg" class="muted" style="margin:8px 0 20px"></div>
+      <div class="toolbar"><h2>Usuarios</h2></div><div id="uList"></div>
+      <div class="pgrid" style="margin-top:12px;max-width:520px"><div class="f"><label for="uName">Nombre</label><input id="uName"></div><div class="f"><label for="uPin">PIN (4 a 8 números)</label><input id="uPin" inputmode="numeric"></div>
+      <div class="f"><label for="uRol">Rol</label><select id="uRol" class="btn"><option value="cajero">Cajero</option><option value="dueno">Dueño</option></select></div></div>
+      <button class="btn pri" id="uSave">Guardar usuario</button> <span id="uMsg" class="muted"></span>
+      <div class="toolbar" style="margin-top:26px"><h2>Respaldo</h2></div>
+      <div class="btns" style="max-width:420px"><button class="btn" id="bkSave">Guardar respaldo</button><button class="btn" id="bkLoad">Restaurar respaldo</button></div><input type="file" id="fileB" accept=".json" hidden>
+    </div>
+  </section>
+</main>
+</div>
+
+<dialog id="dProd">
+  <form method="dialog" id="fProd">
+    <h2 id="dProdTitle">Producto</h2>
+    <div class="f"><label for="pCode">Código de barras</label><input id="pCode" required></div>
+    <div class="f"><label for="pName">Nombre</label><input id="pName" required></div>
+    <div class="f"><label for="pPrice">Precio de venta (CLP)</label><input id="pPrice" type="number" min="0" step="1" required></div>
+    <div class="f"><label for="pCost">Costo (CLP)</label><input id="pCost" type="number" min="0" step="1"></div>
+    <div class="f"><label for="pStock">Stock actual (vacío = sin control)</label><input id="pStock" type="number" step="1"></div>
+    <div class="f"><label for="pMin">Avisar cuando queden</label><input id="pMin" type="number" min="0" step="1"></div>
+    <div class="f"><label for="pVence">Fecha de vencimiento</label><input id="pVence" type="date"></div>
+    <div class="f"><label for="pPN">Promoción: llevando (cantidad)</label><input id="pPN" type="number" min="0" step="1" placeholder="ej. 3"></div>
+    <div class="f"><label for="pPP">Promoción: precio por ese pack (CLP)</label><input id="pPP" type="number" min="0" step="1" placeholder="ej. 2500"></div>
+    <div class="f"><label for="pCat">Categoría</label><input id="pCat" list="catList"><datalist id="catList"></datalist></div>
+    <div class="acts"><button type="button" class="btn" id="pCancel">Cancelar</button><button class="btn pri" type="submit">Guardar</button></div>
+  </form>
+</dialog>
+
+<dialog id="dPay">
+  <h2>Cobrar <span id="payTotal"></span></h2>
+  <div class="f"><label for="desc">Descuento</label><div style="display:flex;gap:8px"><input id="desc" type="number" min="0" step="1" placeholder="0"><select id="descTipo" class="btn" style="width:90px"><option value="%">%</option><option value="$">$</option></select></div></div>
+  <label id="ptsRow" class="chk" hidden><input type="checkbox" id="usePts"><span id="ptsTxt"></span></label>
+  <div class="pgrid">
+    <div class="f"><label for="pEf">Efectivo</label><div class="pi"><input id="pEf" type="number" min="0" step="1"><button type="button" class="btn" data-f="pEf">Resto</button></div></div>
+    <div class="f"><label for="pTa">Tarjeta</label><div class="pi"><input id="pTa" type="number" min="0" step="1"><button type="button" class="btn" data-f="pTa">Resto</button></div></div>
+    <div class="f"><label for="pTr">Transferencia</label><div class="pi"><input id="pTr" type="number" min="0" step="1"><button type="button" class="btn" data-f="pTr">Resto</button></div></div>
+    <div class="f"><label for="pFi">Fiado (a cuenta del cliente)</label><div class="pi"><input id="pFi" type="number" min="0" step="1"><button type="button" class="btn" data-f="pFi">Resto</button></div></div>
+  </div>
+  <div id="fiadoNote" class="low"></div>
+  <div class="vuelto" id="vuelto"></div>
+  <div class="acts"><button type="button" class="btn" id="payCancel">Volver</button><button type="button" class="btn pri" id="payOk">Confirmar pago</button></div>
+</dialog>
+
+<dialog id="dRec">
+  <h2 id="recTitle">Venta registrada</h2>
+  <div class="receipt" id="recBody"></div>
+  <div class="f" style="margin-top:12px"><input id="recTel" placeholder="Celular del cliente para WhatsApp"></div><div id="recMsg" class="muted"></div>
+  <div class="acts"><button type="button" class="btn" id="recWa">WhatsApp</button><button type="button" class="btn" id="recPrint">Imprimir</button><button type="button" class="btn pri" id="recOk">Listo</button></div>
+</dialog>
+
+<dialog id="dHeld">
+  <h2>Ventas en espera</h2>
+  <div id="heldBody"></div>
+  <div class="acts"><button type="button" class="btn" id="heldClose">Cerrar</button></div>
+</dialog>
+
+<dialog id="dMov">
+  <h2>Movimiento de caja</h2>
+  <div class="f"><label for="mTipo">Tipo</label><select id="mTipo" class="btn"><option value="ingreso">Ingreso de dinero</option><option value="retiro">Retiro de dinero</option></select></div>
+  <div class="f"><label for="mMonto">Monto</label><input id="mMonto" type="number" min="1" step="1"></div>
+  <div class="f"><label for="mNota">Motivo</label><input id="mNota"></div>
+  <div class="acts"><button type="button" class="btn" id="mNo">Cancelar</button><button type="button" class="btn pri" id="mOk">Registrar</button></div>
+</dialog>
+
+<dialog id="dCierre">
+  <h2>Cerrar caja</h2>
+  <div class="row"><span>Debería haber</span><b id="cEsp"></b></div>
+  <div class="f"><label for="cContado">Dinero contado</label><input id="cContado" type="number" min="0" step="1"></div>
+  <div class="vuelto" id="cDif"></div>
+  <div class="acts"><button type="button" class="btn" id="cNo2">Cancelar</button><button type="button" class="btn pri" id="cOk2">Cerrar caja</button></div>
+</dialog>
+
+<dialog id="dPick"><h2>Elegir cliente</h2><div class="f"><input id="kQ" placeholder="Buscar por RUT o nombre"></div><div id="kList"></div>
+  <div class="acts"><button type="button" class="btn" id="kNone">Sin cliente</button><button type="button" class="btn" id="kNew">Cliente nuevo</button><button type="button" class="btn pri" id="kClose">Cerrar</button></div></dialog>
+<dialog id="dCli"><h2>Cliente</h2><div class="f"><label for="cRut">RUT</label><input id="cRut"></div><div class="f"><label for="cName">Nombre</label><input id="cName"></div><div class="f"><label for="cTel">Celular</label><input id="cTel"></div>
+  <div class="acts"><button type="button" class="btn" id="cNo3">Cancelar</button><button type="button" class="btn pri" id="cOk3">Guardar</button></div></dialog>
+<dialog id="dAbono"><h2 id="aTit">Abonar deuda</h2><div class="f"><label for="aMonto">Monto (CLP)</label><input id="aMonto" type="number" min="1" step="1"></div>
+  <div class="acts"><button type="button" class="btn" id="aNo">Cancelar</button><button type="button" class="btn pri" id="aOk">Registrar abono</button></div></dialog>
+<dialog id="dEtiq"><h2>Etiquetas con código de barras</h2><div class="f"><label for="eN">Cantidad de etiquetas</label><input id="eN" type="number" min="1" max="60"></div><div class="etqs" id="etqBody"></div>
+  <div class="acts"><button type="button" class="btn" id="eClose">Cerrar</button><button type="button" class="btn pri" id="ePrint">Imprimir</button></div></dialog>
+<dialog id="dPv"><h2>Proveedor</h2><div class="f"><label for="pvName">Nombre</label><input id="pvName"></div><div class="f"><label for="pvRut">RUT</label><input id="pvRut"></div><div class="f"><label for="pvTel">Teléfono</label><input id="pvTel"></div>
+  <div class="acts"><button type="button" class="btn" id="pvNo">Cancelar</button><button type="button" class="btn pri" id="pvOk">Guardar</button></div></dialog>
+<dialog id="dCompra" style="width:min(640px,95vw)"><h2>Nueva compra</h2>
+  <div class="pgrid"><div class="f"><label for="cpProv">Proveedor</label><select id="cpProv" class="btn"></select></div><div class="f"><label for="cpDoc">N.º de factura o guía</label><input id="cpDoc"></div></div>
+  <form id="cpForm" class="scan" autocomplete="off"><input id="cpScan" placeholder="Escanea o escribe el código y Enter"><button class="btn pri">Agregar</button></form>
+  <div id="cpMsg" class="low"></div><div id="cpBody"></div>
+  <div class="row" style="margin-top:10px"><span>Total de la compra</span><b id="cpTot"></b></div>
+  <div class="f"><label for="cpPag">Pagado ahora (CLP). Lo que falte queda por pagar</label><input id="cpPag" type="number" min="0" step="1"></div>
+  <label class="chk"><input type="checkbox" id="cpCaja"> Pagado con efectivo de la caja abierta</label>
+  <div class="acts"><button type="button" class="btn" id="cpNo">Cancelar</button><button type="button" class="btn pri" id="cpOk">Registrar compra</button></div></dialog>
+<dialog id="dGasto"><h2>Registrar gasto</h2><div class="f"><label for="gFecha">Fecha</label><input id="gFecha" type="date"></div>
+  <div class="f"><label for="gCat">Categoría</label><input id="gCat" list="gCats"><datalist id="gCats"><option>Arriendo</option><option>Luz</option><option>Agua</option><option>Internet</option><option>Sueldos</option><option>Transporte</option><option>Otros</option></datalist></div>
+  <div class="f"><label for="gDet">Detalle</label><input id="gDet"></div><div class="f"><label for="gMonto">Monto (CLP)</label><input id="gMonto" type="number" min="1" step="1"></div>
+  <div class="acts"><button type="button" class="btn" id="gNo">Cancelar</button><button type="button" class="btn pri" id="gOk">Guardar</button></div></dialog>
+<dialog id="dMerma"><h2>Merma o ajuste de stock</h2><div class="f"><label for="mmProd">Producto</label><select id="mmProd" class="btn"></select></div>
+  <div class="f"><label for="mmTipo">Motivo</label><select id="mmTipo" class="btn"><option>Merma</option><option>Vencido</option><option>Robo</option><option>Ajuste (suma)</option></select></div>
+  <div class="f"><label for="mmQty">Cantidad</label><input id="mmQty" type="number" min="1" step="1"></div>
+  <div class="acts"><button type="button" class="btn" id="mmNo">Cancelar</button><button type="button" class="btn pri" id="mmOk">Registrar</button></div></dialog>
+<dialog id="dMasivo"><h2>Cambio masivo de precios</h2><div class="f"><label for="mCat">Categoría</label><select id="mCat" class="btn"></select></div>
+  <div class="f"><label for="mPct">Porcentaje (ej. 5 sube, -3 baja)</label><input id="mPct" type="number" step="0.1"></div>
+  <label class="chk"><input type="checkbox" id="mRed" checked> Redondear a múltiplos de $10</label>
+  <div class="acts"><button type="button" class="btn" id="mNo2">Cancelar</button><button type="button" class="btn pri" id="mOk2">Aplicar</button></div></dialog>
+<dialog id="dConf">
+  <h2 id="cMsg"></h2>
+  <div class="acts"><button type="button" class="btn" id="cNo">Cancelar</button><button type="button" class="btn pri" id="cOk">Aceptar</button></div>
+</dialog>
+
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
